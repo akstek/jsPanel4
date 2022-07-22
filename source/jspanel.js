@@ -3189,6 +3189,7 @@ let jsPanel = {
             let cursor = options.cursor || jsPanel.defaults.dragit.cursor;
 
             function pointerUpHandlerDragit(e) {
+                self._pointerIsDown = false;
                 jsPanel.pointermove.forEach(e => document.removeEventListener(e, dragElmt));
                 jsPanel.removeSnapAreas();
                 if (dragstarted) {
@@ -3267,6 +3268,11 @@ let jsPanel = {
 
                 jsPanel.pointerdown.forEach(evt => {
                     handle.addEventListener(evt, e => {
+
+                        // Prevent Multitouch
+                        if (self._pointerIsDown) return;
+                        self._pointerIsDown = true;
+
                         // disable dragging for all mouse buttons but left
                         if (e.button && e.button > 0) {
                             return false;
@@ -3765,6 +3771,7 @@ let jsPanel = {
             }
 
             function pointerUpHandlerResizeit(e) {
+                self._pointerIsDown = false;
                 jsPanel.pointermove.forEach(evt => document.removeEventListener(evt, resizePanel, false));
                 if (e.target.classList && e.target.classList.contains('jsPanel-resizeit-handle')) {
                     let isLeftChange,
@@ -3858,6 +3865,11 @@ let jsPanel = {
                         // prevent window scroll while resizing elmt
                         e.preventDefault();
                         e.stopPropagation();
+
+                         // Prevent Multitouch
+                        if (self._pointerIsDown) return;
+                        self._pointerIsDown = true;
+
                         // disable resizing for all mouse buttons but left
                         if (e.button && e.button > 0) {
                             return false;
